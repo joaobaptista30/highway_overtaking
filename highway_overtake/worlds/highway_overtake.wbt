@@ -139,11 +139,12 @@ MercedesBenzSprinter {
   controller "sprinter_simple"
   sensorsSlotFront [
     Lidar {
+      translation 0 0 -0.19
       horizontalResolution 360
       fieldOfView 3.1416
       verticalFieldOfView 0.1
       numberOfLayers 1
-      maxRange 13
+      maxRange 7
     }
   ]
 }

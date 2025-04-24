@@ -4,7 +4,7 @@ driver = Driver()
 timestep = int(driver.getBasicTimeStep())
 
 # Set target speed (in m/s)
-target_speed = 30.0  # Feel free to adjust this
+target_speed = 45.0  # Feel free to adjust this
 
 # Main loop
 while driver.step() != -1:
