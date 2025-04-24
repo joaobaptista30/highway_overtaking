@@ -1,0 +1,641 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/road/protos/StraightRoadSegment.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/road/protos/RoadLine.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/HighwayPole.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/HighwaySign.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/geometries/protos/Extrusion.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/trees/protos/Forest.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/bmw/BmwX5Simple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/citroen/CitroenCZeroSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/toyota/ToyotaPriusSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/lincoln/LincolnMKZSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/range_rover/RangeRoverSportSVRSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/tesla/TeslaModel3Simple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/mercedes_benz/MercedesBenzSprinterSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/generic/BusSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/generic/TruckSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/generic/TruckTrailerSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/generic/TruckTankSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/generic/ScooterSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/generic/ScooterDriver.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/generic/MotorbikeSimple.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/generic/MotorbikeDriver.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/citroen/CitroenCZero.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/mercedes_benz/MercedesBenzSprinter.proto"
+
+WorldInfo {
+  info [
+    "Autonomous Vehicle Simulation"
+    "The main vehicle uses distance-sensors and a front radar in order to overtake the other vehicles controlled by SUMO."
+  ]
+  title "Highway overtake"
+  ERP 0.6
+  basicTimeStep 10
+  lineScale 1
+  contactProperties [
+    ContactProperties {
+      coulombFriction [
+        8
+      ]
+      softCFM 1e-05
+      bumpSound ""
+      rollSound ""
+      slideSound ""
+    }
+    ContactProperties {
+      material2 "CitroenCZeroWheels"
+      coulombFriction [
+        8
+      ]
+      softCFM 1e-05
+      bumpSound ""
+      rollSound ""
+      slideSound ""
+    }
+    ContactProperties {
+      material2 "ToyotaPriusWheels"
+      coulombFriction [
+        8
+      ]
+      softCFM 1e-05
+      bumpSound ""
+      rollSound ""
+      slideSound ""
+    }
+    ContactProperties {
+      material2 "LincolnMKZWheels"
+      coulombFriction [
+        8
+      ]
+      softCFM 1e-05
+      bumpSound ""
+      rollSound ""
+      slideSound ""
+    }
+    ContactProperties {
+      material2 "RangeRoverSportSVRWheels"
+      coulombFriction [
+        8
+      ]
+      softCFM 1e-05
+      bumpSound ""
+      rollSound ""
+      slideSound ""
+    }
+    ContactProperties {
+      material2 "TruckWheels"
+      coulombFriction [
+        8
+      ]
+      softCFM 1e-05
+      bumpSound ""
+      rollSound ""
+      slideSound ""
+    }
+  ]
+}
+Viewpoint {
+  orientation 0.090122275272079 0.03019005983046862 -0.9954730211247397 3.135374897671089
+  position 76.07026131029357 5.426082683308914 25.153463995625742
+  near 1
+  follow "Mercedes-Benz Sprinter"
+  followSmoothness 0
+  lensFlare LensFlare {
+  }
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+DEF FLOOR Solid {
+  boundingObject Plane {
+  }
+}
+StraightRoadSegment {
+  translation 0 8.75 0.01
+  rotation 0 0 1 3.1415926535
+  id "0"
+  width 15
+  numberOfLanes 4
+  numberOfForwardLanes 4
+  lines [
+    RoadLine {
+      type "continuous"
+      width 0.25
+    }
+  ]
+  rightBorder FALSE
+  leftBorder FALSE
+  rightBarrier TRUE
+  leftBarrier TRUE
+  length 5000
+}
+MercedesBenzSprinter {
+  hidden position_0_0 -2.6083785359672247e-08
+  hidden position2_0_0 5.075283864901676
+  hidden position_0_1 2.6474155932478874e-08
+  hidden position2_0_1 5.0752838504603615
+  hidden position_0_2 4.9545616941901685
+  hidden position_0_3 4.954561633571015
+  hidden linearVelocity_0 -2.80171413337095 1.118618618601159e-05 -0.0034027095665470648
+  hidden angularVelocity_0 1.1758655986075027e-09 0.0009232157501162974 -1.0022363158458206e-08
+  hidden rotation_1 1.3041892679836123e-08 -0.9999999999999999 -1.8902598118601614e-08 5.075283864901676
+  hidden linearVelocity_1 -2.801770970931062 1.129299261875215e-05 -5.825226630918114e-05
+  hidden angularVelocity_1 -3.7385133839543664e-05 -7.070301569862294 -3.0719902251284975e-07
+  hidden rotation_2 1.3237077966239439e-08 0.9999999999999998 1.9185494570286757e-08 5.0752838504603615
+  hidden linearVelocity_2 -2.801770953934412 1.113645352390575e-05 -5.8252413504737264e-05
+  hidden angularVelocity_2 -1.9108439396939675e-05 -7.070301559634389 2.0368176006132496e-07
+  hidden rotation_3 0 -1 0 4.9545616941901685
+  hidden linearVelocity_3 -2.801691276448752 1.1256696216859021e-05 -0.00034152533971518797
+  hidden angularVelocity_3 -3.7158608330060485e-05 -7.001275814635844 -3.898540696362633e-07
+  hidden rotation_4 0 1 0 4.954561633571015
+  hidden linearVelocity_4 -2.8016912594137104 1.1085435251054612e-05 -0.00034152586622459137
+  hidden angularVelocity_4 -1.8780318231543445e-05 -7.001275772129868 2.797738975278392e-07
+  translation -11.344500388402366 6.560007884973862 0.3711964087184711
+  rotation -0.0010747641553553314 -2.5072271118554774e-10 0.9999994224408385 3.1415899857391123
+  controller "sprinter_simple"
+}
+CitroenCZero {
+  hidden position_0_0 -4.3568560590702834e-07
+  hidden position2_0_0 5.643325047050525
+  hidden position_0_1 -3.924993942193378e-07
+  hidden position2_0_1 5.643297404066402
+  hidden position_0_2 5.6936678603542825
+  hidden position_0_3 5.6936645083641535
+  hidden linearVelocity_0 -2.263829357852362 1.798802431534236e-05 -5.1817121298064e-05
+  hidden angularVelocity_0 1.428812792665565e-07 0.00011402314196299827 -2.5307569186213226e-06
+  hidden rotation_1 2.1784280295346536e-07 -0.9999999999997601 -6.575158531778143e-07 5.643325047050381
+  hidden linearVelocity_1 -2.263842284161941 2.1528158132430122e-05 -2.650883469569282e-07
+  hidden angularVelocity_1 -7.330439969303437e-05 -7.949450576627358 0.0012723855372950964
+  hidden rotation_2 -1.962496971096332e-07 0.9999999999998054 -5.923138682168785e-07 5.643297404066286
+  hidden linearVelocity_2 -2.2638389662399283 2.1395931766940467e-05 -2.6239779042324547e-07
+  hidden angularVelocity_2 -5.2592072304947634e-05 -7.949438925849323 0.0012725128123630058
+  hidden rotation_3 0 -1 0 5.6936678603542825
+  hidden linearVelocity_3 -2.2638481324295143 1.5130553387188042e-05 1.107116557228375e-06
+  hidden angularVelocity_3 -7.549339898542588e-05 -7.912583114400027 0.0012638530684076087
+  hidden rotation_4 0 1 0 5.6936645083641535
+  hidden linearVelocity_4 -2.2638448942593756 1.499068813273089e-05 1.110030066259511e-06
+  hidden angularVelocity_4 -5.4610999070309305e-05 -7.912581519758598 0.0012640672258424279
+  translation -29.165699205450057 6.730028595624815 0.17371268802097517
+  rotation 0.0052408292393655576 8.040375969927257e-05 0.9999862635277145 3.141584780829319
+  controller "citroen_simple"
+}
+StraightRoadSegment {
+  translation -5000 -8.75 0.01
+  name "road(1)"
+  id "1"
+  width 15
+  numberOfLanes 4
+  numberOfForwardLanes 4
+  lines [
+    RoadLine {
+      type "continuous"
+      width 0.25
+    }
+  ]
+  rightBorder FALSE
+  leftBorder FALSE
+  rightBarrier TRUE
+  leftBarrier TRUE
+  length 5000
+}
+HighwayPole {
+  translation -215 16 0
+  stand 2
+  height 7
+  length 31
+  thickness 0.35
+  curveRadius 0.5
+  rightHorizontalSigns [
+    HighwaySign {
+      translation 0 -5.35 0
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  rightVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(1)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+  leftHorizontalSigns [
+    HighwaySign {
+      translation 0 17.5 0
+      name "highway sign(2)"
+      height 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  leftVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(3)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+}
+HighwayPole {
+  translation -600 16 0
+  name "highway pole(1)"
+  stand 2
+  height 7
+  length 31
+  thickness 0.35
+  curveRadius 0.5
+  rightHorizontalSigns [
+    HighwaySign {
+      translation 0 -5.35 0
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  rightVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(1)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+  leftHorizontalSigns [
+    HighwaySign {
+      translation 0 17.5 0
+      name "highway sign(2)"
+      height 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  leftVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(3)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+}
+HighwayPole {
+  translation -1000 16 0
+  name "highway pole(2)"
+  stand 2
+  height 7
+  length 31
+  thickness 0.35
+  curveRadius 0.5
+  rightHorizontalSigns [
+    HighwaySign {
+      translation 0 -5.35 0
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  rightVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(1)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+  leftHorizontalSigns [
+    HighwaySign {
+      translation 0 17.5 0
+      name "highway sign(2)"
+      height 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  leftVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(3)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+}
+HighwayPole {
+  translation -1400 16 0
+  name "highway pole(3)"
+  stand 2
+  height 7
+  length 31
+  thickness 0.35
+  curveRadius 0.5
+  rightHorizontalSigns [
+    HighwaySign {
+      translation 0 -5.35 0
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  rightVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(1)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+  leftHorizontalSigns [
+    HighwaySign {
+      translation 0 17.5 0
+      name "highway sign(2)"
+      height 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  leftVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(3)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+}
+HighwayPole {
+  translation -1800 16 0
+  name "highway pole(4)"
+  stand 2
+  height 7
+  length 31
+  thickness 0.35
+  curveRadius 0.5
+  rightHorizontalSigns [
+    HighwaySign {
+      translation 0 -5.35 0
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  rightVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(1)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+  leftHorizontalSigns [
+    HighwaySign {
+      translation 0 17.5 0
+      name "highway sign(2)"
+      height 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  leftVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(3)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+}
+HighwayPole {
+  translation -2200 16 0
+  name "highway pole(5)"
+  stand 2
+  height 7
+  length 31
+  thickness 0.35
+  curveRadius 0.5
+  rightHorizontalSigns [
+    HighwaySign {
+      translation 0 -5.35 0
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  rightVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(1)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+  leftHorizontalSigns [
+    HighwaySign {
+      translation 0 17.5 0
+      name "highway sign(2)"
+      height 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  leftVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(3)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+}
+HighwayPole {
+  translation -2600 16 0
+  name "highway pole(6)"
+  stand 2
+  height 7
+  length 31
+  thickness 0.35
+  curveRadius 0.5
+  rightHorizontalSigns [
+    HighwaySign {
+      translation 0 -5.35 0
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  rightVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(1)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+  leftHorizontalSigns [
+    HighwaySign {
+      translation 0 17.5 0
+      name "highway sign(2)"
+      height 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  leftVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(3)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+}
+HighwayPole {
+  translation -3000 16 0
+  name "highway pole(7)"
+  stand 2
+  height 7
+  length 31
+  thickness 0.35
+  curveRadius 0.5
+  rightHorizontalSigns [
+    HighwaySign {
+      translation 0 -5.35 0
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  rightVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(1)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+  leftHorizontalSigns [
+    HighwaySign {
+      translation 0 17.5 0
+      name "highway sign(2)"
+      height 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_bayonne.jpg"
+      ]
+    }
+  ]
+  leftVerticalSigns [
+    HighwaySign {
+      translation 0 0 0.66
+      name "highway sign(3)"
+      height 1.7
+      length 3.5
+      texture [
+        "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/traffic/protos/textures/highway_sign_sebastian.jpg"
+      ]
+    }
+  ]
+}
+Solid {
+  rotation -0.577349914474874 -0.5773499786187347 0.5773509144747258 2.0944
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.8 0.8 0.8
+        baseColorMap ImageTexture {
+          url [
+            "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/worlds/textures/ground_grass.jpg"
+          ]
+        }
+        roughness 0.5
+        metalness 0
+        textureTransform TextureTransform {
+          scale 1500 43
+        }
+      }
+      geometry Extrusion {
+        crossSection [
+          60 0, 59 0.061558297, 58 0.24471742, 57 0.54496738, 56 0.95491503, 55 1.4644661, 54 2.0610737, 53 2.7300475, 52 3.454915, 51 4.2178277, 50 5, 49 5.7821723, 48 6.545085, 47 7.2699525, 46 7.9389263, 45 8.5355339, 44 9.045085, 43 9.4550326, 42 9.7552826, 41 9.9384417, 40 10, 39 9.9384417, 38 9.7552826, 37 9.4550326, 36 9.045085, 35 8.5355339, 34 7.9389263, 33 7.2699525, 32 6.545085, 31 5.7821723, 30 5, 29 4.2178277, 28 3.454915, 27 2.7300475, 26 2.0610737, 25 1.4644661, 24 0.95491503, 23 0.54496738, 22 0.24471742, 21 0.061558297, 20 0, -20 0, -21 0.061558297, -22 0.24471742, -23 0.54496738, -24 0.95491503, -25 1.4644661, -26 2.0610737, -27 2.7300475, -28 3.454915, -29 4.2178277, -30 5, -31 5.7821723, -32 6.545085, -33 7.2699525, -34 7.9389263, -35 8.5355339, -36 9.045085, -37 9.4550326, -38 9.7552826, -39 9.9384417, -40 10, -41 9.9384417, -42 9.7552826, -43 9.4550326, -44 9.045085, -45 8.5355339, -46 7.9389263, -47 7.2699525, -48 6.545085, -49 5.7821723, -50 5, -51 4.2178277, -52 3.454915, -53 2.7300475, -54 2.0610737, -55 1.4644661, -56 0.95491503, -57 0.54496738, -58 0.24471742, -59 0.061558297, -60 0
+        ]
+        spine [
+          0 0 0
+          0 0 5000
+        ]
+        beginCap FALSE
+        endCap FALSE
+        ccw FALSE
+        creaseAngle 1.1
+      }
+      castShadows FALSE
+    }
+  ]
+  name "solid(2)"
+}
+Forest {
+  rotation 0 0 1 -1.5707953071795862
+  treesFiles [
+    "forest/highway_overtake/1.forest"
+  ]
+  shape []
+  type "cherry tree"
+  minHeight 4
+  maxRadius 2.5
+  minRadius 1.5
+}
