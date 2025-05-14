@@ -33,7 +33,6 @@ WorldInfo {
   ]
   title "Highway overtake"
   ERP 0.6
-  basicTimeStep 10
   lineScale 1
   contactProperties [
     ContactProperties {
@@ -98,8 +97,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.20580373600599447 -0.2909102364808853 -0.9343532825203809 5.397535218213263
-  position -53.50095822822875 -22.73283991613202 15.479558499501856
+  orientation 0.08404426775455 -0.9961233555702629 -0.025977327519222482 5.250820090217466
+  position -48.38440140171467 -0.9668483070737577 31.952756248513026
   near 1
   follow "Mercedes-Benz Sprinter"
   followSmoothness 0
@@ -133,10 +132,10 @@ StraightRoadSegment {
   leftBarrier TRUE
   length 5000
 }
-MercedesBenzSprinter {
+DEF CAR1 MercedesBenzSprinter {
   translation -11.344500388402366 6.560007884973862 0.3711964087184711
   rotation -0.0010747641553553314 -2.5072271118554774e-10 0.9999994224408385 3.1415899857391123
-  controller "sprinter_simple"
+  controller "sprinter_rulebased"
   sensorsSlotFront [
     Lidar {
       translation 0 0 -0.19
@@ -144,12 +143,18 @@ MercedesBenzSprinter {
       fieldOfView 3.1416
       verticalFieldOfView 0.1
       numberOfLayers 1
-      maxRange 7
+      maxRange 12
+    }
+  ]
+  sensorsSlotCenter [
+    InertialUnit {
+    }
+    GPS {
     }
   ]
 }
-CitroenCZero {
-  translation -29.165699205450057 6.730028595624815 0.17371268802097517
+DEF CAR2 CitroenCZero {
+  translation -38.0354 6.73006 0.266683
   rotation 0.0052408292393655576 8.040375969927257e-05 0.9999862635277145 3.141584780829319
   controller "citroen_simple"
 }
