@@ -1,0 +1,15 @@
+controllers em falta:
+-citroen aleatorio
+
+para o controlbased:
+-fazer script p repetir 100x as experiencias
+-testes (optimal)
+-testes (non-optimal; controller do citroen aleatorio e lidar sujo 1)
+-testes (non-optimal; controller do citroen aleatorio e lidar sujo 2)
+NOTA: pensar em usar diferentes posicoes iniciais! porque senao o overtaking ocorre sempre no mesmo momento
+
+para o rl:
+-
+-
+-
+
