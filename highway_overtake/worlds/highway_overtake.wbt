@@ -99,7 +99,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 0.08404426775455 -0.9961233555702629 -0.025977327519222482 5.250820090217466
-  position -48.38440140171467 -0.9668483070737577 31.952756248513026
+  position -53.43145741220766 1.928080481898439 55.4900461873289
   near 1
   follow "Mercedes-Benz Sprinter"
   followSmoothness 0
@@ -136,7 +136,8 @@ StraightRoadSegment {
 MercedesBenzSprinter {
   translation -11.344500388402366 6.560007884973862 0.3711964087184711
   rotation -0.0010747641553553314 -2.5072271118554774e-10 0.9999994224408385 3.1415899857391123
-  controller "sprinter_hardcoded"
+  controller "<extern>"
+  supervisor TRUE
   sensorsSlotFront [
     Lidar {
       translation 0 0 -0.19
@@ -157,6 +158,7 @@ MercedesBenzSprinter {
 CitroenCZero {
   translation -29.165699205450057 6.730028595624815 0.17371268802097517
   rotation 0.0052408292393655576 8.040375969927257e-05 0.9999862635277145 3.141584780829319
+  name "CitroenCZero"
   controller "citroen_simple"
 }
 StraightRoadSegment {
