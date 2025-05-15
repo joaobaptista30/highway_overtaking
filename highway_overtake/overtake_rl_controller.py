@@ -1,35 +1,29 @@
 import sys
 import os
-import numpy as np
 from controller import Supervisor
 
 try:
-    import gymnasium as gym  # Using the newer gymnasium API
+    import numpy as np
+    import gymnasium as gym
     from stable_baselines3 import PPO
     from stable_baselines3.common.env_checker import check_env
+    import torch
 except ImportError:
     sys.exit(
         'Please make sure you have all dependencies installed. '
         'Run: "pip3 install numpy gymnasium stable_baselines3"'
     )
 
-# Check if Webots is in PATH
-webots_home = os.environ.get('WEBOTS_HOME', 'C:/Program Files/Webots')
-if not os.path.exists(f"{webots_home}/lib/controller"):
-    print(f"Warning: WEBOTS_HOME directory structure doesn't seem right")
-    print(f"Current WEBOTS_HOME: {webots_home}")
-    print("Try setting the WEBOTS_HOME environment variable correctly")
-
 '''
 Found MercedesBenzSprinter, ID: 175
-Found CitroenCZero, ID: 1492
+Found CitroenCZero, ID: 1492 | DEF: FRONT_CAR
 '''
 
 
 class OvertakeEnv(Supervisor, gym.Env):
     """Overtaking environment for Reinforcement Learning."""
 
-    def __init__(self, max_episode_steps=500):
+    def __init__(self, max_episode_steps=5000000):
         """Initialize the environment.
 
         Args:
@@ -56,8 +50,8 @@ class OvertakeEnv(Supervisor, gym.Env):
         # We'll use 10 LiDAR segments + relative speed + lane position
         self.n_lidar_segments = 10
         self.observation_space = gym.spaces.Box(
-            low=np.array([0.0] * self.n_lidar_segments + [-20.0, -1.0]),
-            high=np.array([7.0] * self.n_lidar_segments + [20.0, 1.0]),
+            low=np.array([0.0] * self.n_lidar_segments + [-200.0, -1.0]),
+            high=np.array([12.0] * self.n_lidar_segments + [200.0, 1.0]),
             dtype=np.float32
         )
 
@@ -74,16 +68,16 @@ class OvertakeEnv(Supervisor, gym.Env):
         self.episode_steps = 0
 
         # Get the front car node for position tracking
-        self.front_car = self.getFromId(1492)  # CitroenCZero ID
+        self.front_car = self.getFromDef("FRONT_CAR")  # CitroenCZero DEF
 
         # Get self node for position tracking
         self.self_car = self.getSelf()
 
         # Print car information for debugging
-        if self.self_car:
-            print(f"Self car found: {self.self_car.getTypeName()}")
-        if self.front_car:
-            print(f"Front car found: {self.front_car.getTypeName()}")
+        #if self.self_car:
+        #    print(f"Self car found: {self.self_car.getTypeName()}")
+        #if self.front_car:
+        #    print(f"Front car found: {self.front_car.getTypeName()}")
 
         # Initialize devices
         self._init_devices()
@@ -100,12 +94,12 @@ class OvertakeEnv(Supervisor, gym.Env):
 
         self.lidar.enable(self.timestep)
         self.lidar_resolution = self.lidar.getHorizontalResolution()
-        print(f"LiDAR initialized with resolution: {self.lidar_resolution}")
+        #print(f"LiDAR initialized with resolution: {self.lidar_resolution}")
 
-        # Get GPS (position) if available
+        # Get GPS (position)
         self.gps = self.getDevice("gps")
         self.gps.enable(self.timestep)
-        print("GPS initialized successfully")
+        #print("GPS initialized successfully")
 
     def reset(self,seed = 0):
         """Reset the environment to initial state."""
@@ -113,6 +107,10 @@ class OvertakeEnv(Supervisor, gym.Env):
         self.simulationResetPhysics()
         self.simulationReset()
         super().step(self.timestep)
+
+        # TODO
+        # podemos fazer um codigo para o carro da frente ser posicionado num local aleatorio
+        # com base na posição do mapa
 
         # Reset state variables
         self.steps_overtaking = 0
@@ -135,33 +133,29 @@ class OvertakeEnv(Supervisor, gym.Env):
         return self._get_observation(), info
 
     def _get_observation(self):
-        """Get the current observation from sensors."""
+        """Get the current observation from sensors.
+           # Observations:
+           # We'll use 10 LiDAR segments + relative speed + lane position
+        """
+
         # Process LiDAR data
         lidar_segments = []
+        lidar_data = self.lidar.getRangeImage()
 
-        if self.lidar:
-            try:
-                lidar_data = self.lidar.getRangeImage()
+        # Process the 180-degree field of view into segments
+        segment_size = len(lidar_data) // self.n_lidar_segments
 
-                # Process the 180-degree field of view into segments
-                segment_size = len(lidar_data) // self.n_lidar_segments
+        for i in range(self.n_lidar_segments):
+            start_idx = i * segment_size
+            end_idx = (i + 1) * segment_size
+            segment_data = lidar_data[start_idx:end_idx]
+            # Use minimum distance in each segment (most conservative)
+            min_distance = min(segment_data) if segment_data else 7.0
+            lidar_segments.append(min(min_distance,12))
 
-                for i in range(self.n_lidar_segments):
-                    start_idx = i * segment_size
-                    end_idx = (i + 1) * segment_size
-                    segment_data = lidar_data[start_idx:end_idx]
-                    # Use minimum distance in each segment (most conservative)
-                    min_distance = min(segment_data) if segment_data else 7.0
-                    lidar_segments.append(min_distance)
-            except Exception as e:
-                print(f"Error getting LiDAR data: {e}")
-                # Use dummy data if LiDAR fails
-                lidar_segments = [7.0] * self.n_lidar_segments
-        else:
-            # Use dummy data if no LiDAR
-            lidar_segments = [7.0] * self.n_lidar_segments
 
         # Get lane position (-1: right lane, 0: center, 1: left lane)
+        #     self_pos[1] :    12.5 - 8.5  |  8.4 - 5 |  5 - 2
         # This is a simplified measure - in a real system you would use more sophisticated lane detection
         lane_pos = 0.0
         rel_speed = 0.0
@@ -169,11 +163,12 @@ class OvertakeEnv(Supervisor, gym.Env):
         if self.self_car and self.front_car:
             try:
                 self_pos = self.self_car.getPosition()
-                lane_pos = self_pos[1] / self.lane_width
+                if 12.5 <= self_pos[1] < 8.5: lane_pos = -1.0 # right lane
+                elif 8.5 <= self_pos[1] < 5: lane_pos = 0.0 # center lane
+                elif 5 <= self_pos[1] < 2: lane_pos = 1.0 # left lane
 
                 # Calculate relative speed (simplified)
                 self_vel = self.self_car.getVelocity()
-                front_car_pos = self.front_car.getPosition()
                 front_car_vel = self.front_car.getVelocity()
 
                 # Relative speed in the X direction (forward)
@@ -199,16 +194,17 @@ class OvertakeEnv(Supervisor, gym.Env):
                 self_vel = self.self_car.getVelocity()
 
                 # Check if we have overtaken
-                if (self_pos[0] > front_car_pos[0] + 5.0 and  # Passed by 5 meters
-                        self_pos[1] < 0.0):  # In the left lane
+                if (abs(self_pos[0]) > abs(front_car_pos[0]) + 5.0 and  # Passed by 5 meters
+                        self_pos[1] < 4.3):  # In the left lane
                     if not self.has_overtaken:
                         reward += self.overtake_reward
                         self.has_overtaken = True
                         info['overtake'] = True
                         done = True
 
+                # TODO
                 # Check for collision using LiDAR
-                min_distance = 7.0  # Default value
+                min_distance = 0.5  # Default value
                 if self.lidar:
                     try:
                         lidar_data = self.lidar.getRangeImage()
@@ -222,15 +218,22 @@ class OvertakeEnv(Supervisor, gym.Env):
                     info['crash'] = True
 
                 # Reward for maintaining speed
-                speed = np.linalg.norm(self_vel)
-                speed_reward = -abs(speed - self.target_speed) * self.speed_reward_factor
-                reward += speed_reward
+                # VERIFY
+                # nao alteramos a velocidade do robo, esta sempre constante
+                #speed = np.linalg.norm(self_vel)
+                #speed_reward = -abs(speed - self.target_speed) * self.speed_reward_factor
+                #reward += speed_reward
 
                 # Reward for being in the left lane during overtaking
-                if self_pos[1] < 0.0 and not self.has_overtaken:
+                if self_pos[1] < 4.3 and not self.has_overtaken:
                     lane_reward = 0.5
                     reward += lane_reward
                     self.steps_overtaking += 1
+
+                # penalise for being in the right lane
+                if self_pos[1] > 8.0:
+                    lane_reward = -20
+                    reward += lane_reward
 
                 # Penalize for taking too long to overtake
                 if self.steps_overtaking > 200 and not self.has_overtaken:
@@ -253,6 +256,7 @@ class OvertakeEnv(Supervisor, gym.Env):
 
     def step(self, action):
         """Execute action and return new state, reward, done, and info."""
+        ''' MOVE OVERTAKING '''
         # Convert action to steering angle
         if action == 0:  # Steer left
             steering_angle = -0.2
@@ -261,15 +265,38 @@ class OvertakeEnv(Supervisor, gym.Env):
         else:  # Steer right
             steering_angle = 0.2
 
-        # Apply controls using the driver API
+        # Get devices
+        # speed control
+        left_drive = self.getDevice("left_front_wheel")
+        right_drive = self.getDevice("right_front_wheel")
+        # wheel ang control
+        left_steer = self.getDevice("left_steer")
+        right_steer = self.getDevice("right_steer")
+
+        # Set drive wheels to velocity mode
+        left_drive.setPosition(float('inf'))
+        right_drive.setPosition(float('inf'))
+
         try:
             # Set cruising speed
-            self.self_car.setCruisingSpeed(self.target_speed)
+            left_drive.setVelocity(self.target_speed)
+            right_drive.setVelocity(self.target_speed)
+
+            #self.self_car.setCruisingSpeed(self.target_speed)
 
             # Set steering angle
-            self.self_car.setSteeringAngle(steering_angle)
+            left_steer.setPosition(steering_angle)
+            right_steer.setPosition(steering_angle)
+            # self.self_car.setSteeringAngle(steering_angle)
         except Exception as e:
             print(f"Error applying vehicle controls: {e}")
+
+        ''' MOVE FRONT CAR '''
+        # angular_velocity (rad/s) = linear_velocity (m/s) / wheel_radius (m)
+        wheel_radius = 0.28475
+        speed_desired = (self.target_speed - 15) / wheel_radius
+        # self.front_car.setVelocity([speed_desired,0.0])
+        self.front_car.setVelocity([-(self.target_speed-20)/10, 0.0, 0.0])
 
         # Execute simulation step
         super().step(self.timestep)
@@ -289,31 +316,43 @@ class OvertakeEnv(Supervisor, gym.Env):
             super().step(self.timestep)
 
 
+
 def train_model(env: OvertakeEnv):
     """Train the reinforcement learning model."""
 
+    # Check for GPU and set device to CUDA if available
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
+
     try:
-        # Check environment compatibility
+        algorithm_name = "PPO"
+        policy = "MlpPolicy"
+        print(f"Starting training for {algorithm_name} with {policy}")
+
+        # Create model directory
+        model_dir = f"models/{algorithm_name}/{policy}"
+        os.makedirs(model_dir, exist_ok=True)
+
         check_env(env)
+        env.reset()
 
-        # Create and train the model
-        model = PPO("MlpPolicy", env, verbose=1,
-                    learning_rate=0.0003,
-                    n_steps=2048,
-                    batch_size=64,
-                    n_epochs=10,
-                    gamma=0.99)
+        model = PPO(policy, env, verbose=1, device=device)
 
-        # Train for 100,000 timesteps
-        model.learn(total_timesteps=100000)
+        # Training parameters
+        timesteps = 100000
+        num_iterations = 2
 
-        # Save the model
-        model.save("overtake_ppo_model")
+        for i in range(1, num_iterations + 1):
+            print(f"Training iteration {i}/{num_iterations} for {algorithm_name} with {policy}")
+            model.learn(total_timesteps=timesteps, reset_num_timesteps=False, progress_bar=True)
 
-        return model
+            # Save model
+            model.save(f"{model_dir}/{timesteps * i}")
+
+        print(f"Completed training for {algorithm_name} with {policy}")
+
     except Exception as e:
         print(f"Error during training: {e}")
-        return None
 
 
 def evaluate_model(model, env, num_episodes=10):
@@ -384,38 +423,38 @@ def demo_model(model, env):
 
 def main():
     """Main function."""
+
     print("Overtaking RL controller initialized")
 
     # Create environment
     env = OvertakeEnv()
 
-    # Check if we should load an existing model
-    model = None
-    try:
-        print("Looking for existing model...")
-        model = PPO.load("overtake_ppo_model")
-        print("Existing model loaded!")
-        train_new = False
-    except Exception as e:
-        print(f"No existing model found ({e}). Will train a new one.")
-        train_new = True
+    train_new = True
 
     if train_new:
-        print("Starting training...")
-        model = train_model(env)
-        if model:
-            print("Training complete!")
-        else:
-            print("Training failed.")
+        train_model(env)
 
-    # Evaluate model performance
-    if model:
-        evaluate_model(model, env)
-
-        # Run demo
-        demo_model(model, env)
     else:
-        print("No model to evaluate or demo.")
+        model = None
+        try:
+            steps = 70000 # replace with model version
+
+            model_dir = f"models/PPO/MlpPolicy/{steps}.zip"
+            print("Looking for existing model...")
+            model = PPO.load(model_dir, device="cpu")
+            print("Existing model loaded!")
+        except Exception as e:
+            print(f"No existing model found ({e}). Will train a new one.")
+
+
+        # Evaluate model performance
+        if model:
+            evaluate_model(model, env)
+
+            # Run demo
+            demo_model(model, env)
+        else:
+            print("No model to evaluate or demo.")
 
 
 if __name__ == "__main__":
