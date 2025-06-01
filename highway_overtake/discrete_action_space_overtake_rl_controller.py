@@ -1,5 +1,8 @@
 import sys
 import os
+
+from torch.onnx.symbolic_opset9 import contiguous
+
 from controller import Supervisor
 
 try:
@@ -35,8 +38,6 @@ class OvertakeEnv(Supervisor, gym.Env):
         self.max_speed = 80.0  # Maximum speed in m/s
         self.target_speed = 60.0  # Target cruising speed in m/s
         self.front_safe_distance = 5.0  # Safe distance to front vehicle in m
-        self.side_safe_distance = 3.0  # Safe distance to side obstacles in m
-        self.lane_width = 3.5  # Approximate lane width in meters
         self.timestep = int(self.getBasicTimeStep())
         self.overtake_reward = 100.0  # Reward for successful overtaking
         self.crash_penalty = -100.0  # Penalty for crashing
@@ -51,7 +52,7 @@ class OvertakeEnv(Supervisor, gym.Env):
         self.n_lidar_segments = 10
         self.observation_space = gym.spaces.Box(
             low=np.array([0.0] * self.n_lidar_segments + [-200.0, -1.0]),
-            high=np.array([12.0] * self.n_lidar_segments + [200.0, 1.0]),
+            high=np.array([7.0] * self.n_lidar_segments + [200.0, 1.0]),
             dtype=np.float32
         )
 
@@ -67,17 +68,11 @@ class OvertakeEnv(Supervisor, gym.Env):
         self.has_overtaken = False
         self.episode_steps = 0
 
-        # Get the front car node for position tracking
-        self.front_car = self.getFromDef("FRONT_CAR")  # CitroenCZero DEF
-
         # Get self node for position tracking
         self.self_car = self.getSelf()
 
-        # Print car information for debugging
-        #if self.self_car:
-        #    print(f"Self car found: {self.self_car.getTypeName()}")
-        #if self.front_car:
-        #    print(f"Front car found: {self.front_car.getTypeName()}")
+        # Get the front car node for position tracking
+        self.front_car = self.getFromDef("FRONT_CAR")  # CitroenCZero DEF
 
         # Initialize devices
         self._init_devices()
@@ -151,11 +146,11 @@ class OvertakeEnv(Supervisor, gym.Env):
             segment_data = lidar_data[start_idx:end_idx]
             # Use minimum distance in each segment (most conservative)
             min_distance = min(segment_data) if segment_data else 7.0
-            lidar_segments.append(min(min_distance,12))
+            lidar_segments.append(min(min_distance,7.0)) # 7.0 is the range of Lidar
 
 
         # Get lane position (-1: right lane, 0: center, 1: left lane)
-        #     self_pos[1] :    12.5 - 8.5  |  8.4 - 5 |  5 - 2
+        # self_pos[1]: (y values) 12.5 - 8.5  |  8.4 - 5 |  5 - 2
         # This is a simplified measure - in a real system you would use more sophisticated lane detection
         lane_pos = 0.0
         rel_speed = 0.0
@@ -172,7 +167,7 @@ class OvertakeEnv(Supervisor, gym.Env):
                 front_car_vel = self.front_car.getVelocity()
 
                 # Relative speed in the X direction (forward)
-                rel_speed = self_vel[0] - front_car_vel[0]
+                rel_speed = -(self_vel[0] - front_car_vel[0]) # due to map config, car are moving on the -X axis
             except Exception as e:
                 print(f"Error calculating position/velocity: {e}")
 
@@ -192,20 +187,20 @@ class OvertakeEnv(Supervisor, gym.Env):
                 self_pos = self.self_car.getPosition()
                 front_car_pos = self.front_car.getPosition()
 
-                # Check if we have overtaken
-                if (abs(self_pos[0]) > abs(front_car_pos[0]) + 5.0 and  # Passed by 5 meters
-                        self_pos[1] < 4.3):  # In the left lane
-                    if not self.has_overtaken:
-                        reward += self.overtake_reward
-                        self.has_overtaken = True
-                        info['overtake'] = True
-                        done = True
 
-                # Reward for being in the left lane during overtaking
-                if self_pos[1] < 4.3 and not self.has_overtaken:
-                    lane_reward = 0.5
-                    reward += lane_reward
-                    self.steps_overtaking += 1
+                # in the left lane during overtaking
+                if self_pos[1] < 4.3:
+                    # Check if we have overtaken
+                    if abs(self_pos[0]) > abs(front_car_pos[0]) + 5.0: # Passed by 5 meter
+                        if not self.has_overtaken:
+                            reward += self.overtake_reward
+                            self.has_overtaken = True
+                            info['overtake'] = True
+                            done = True
+
+                    if not self.has_overtaken:
+                        reward += 30
+                        self.steps_overtaking += 1
 
                 # Check for collision using LiDAR
                 if self.lidar:
@@ -221,31 +216,19 @@ class OvertakeEnv(Supervisor, gym.Env):
                     except Exception as e:
                         print(f"Error reading LiDAR: {e}")
 
-                '''
-                # Reward for maintaining speed
-                # VERIFY
-                # nao alteramos a velocidade do robo, esta sempre constante
-                self_vel = self.self_car.getVelocity()
-                speed = np.linalg.norm(self_vel)
-                speed_reward = -abs(speed - self.target_speed) * self.speed_reward_factor
-                reward += speed_reward
-                '''
 
-                # penalise for being in the right lane
+                # end simulation for being in the right lane
                 if self_pos[1] > 8.0:
-                    lane_reward = self.crash_penalty
-                    reward += lane_reward
-
-                    if abs(self_pos[0]) > (abs(front_car_pos[0]) + 5.0):
-                        info['overtake'] = False
-                        info['crash'] = True
-                        done = True
-
+                    reward += self.crash_penalty
+                    info['overtake'] = False
+                    info['crash'] = True
+                    done = True
+                        
                 # Penalize for taking too long to overtake
                 if self.steps_overtaking > 200 and not self.has_overtaken:
                     reward -= 50.0
-                    done = True
                     info['timeout'] = True
+                    done = True
 
 
             except Exception as e:
@@ -348,7 +331,7 @@ def train_model(env: OvertakeEnv):
 
         # Training parameters
         timesteps = 100000
-        num_iterations = 2
+        num_iterations = 10
 
         for i in range(1, num_iterations + 1):
             print(f"Training iteration {i}/{num_iterations} for {algorithm_name} with {policy}")
@@ -375,12 +358,13 @@ def evaluate_model(model, env, num_episodes=10):
     successes = 0
 
     for ep in range(num_episodes):
-        obs = env.reset()
+        obs, _ = env.reset()
         done = False
         ep_reward = 0
 
         while not done:
-            action, _ = model.predict(obs, deterministic=True)
+            action, _ = model.predict(obs)
+
             obs, reward, done, _, info = env.step(action)
             ep_reward += reward
 
