@@ -1,0 +1,58 @@
+evaluation with 25 runs each
+
+(learning)
+100k:
+Evaluation Results:
+Average Reward: 3374.8
+Success Rate: 0.0%
+
+200k:
+Evaluation Results:
+Average Reward: 3404.6
+Success Rate: 0.0%
+
+300k:
+Evaluation Results:
+Average Reward: 3740.4
+Success Rate: 30.0%
+
+400k:
+Evaluation Results:
+Average Reward: 3630.0
+Success Rate: 20.0%
+
+500k:
+Evaluation Results:
+Average Reward: 3940.8
+Success Rate: 50.0%
+
+
+
+(good models)
+600k:
+Evaluation Results:
+Average Reward: 4322.4
+Success Rate: 90.0%
+
+700k:
+Evaluation Results:
+Average Reward: 4629.8
+Success Rate: 80.0%
+
+
+
+(started going right and lost controll, maybe more steps and it would go back to turn left and good performance)
+800k:
+Evaluation Results:
+Average Reward: 3478.8
+Success Rate: 0.0%
+
+900k:
+Evaluation Results:
+Average Reward: 3468.6
+Success Rate: 0.0%
+
+1M:
+Evaluation Results:
+Average Reward: 3468.0
+Success Rate: 0.0%

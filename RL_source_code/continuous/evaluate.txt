@@ -1,0 +1,51 @@
+evaluation with 25 runs each
+
+100k:
+Evaluation Results:
+Average Reward: 1759.8
+Success Rate: 0.0%
+
+200k:
+Evaluation Results:
+Average Reward: 1959.6
+Success Rate: 0.0%
+
+300k:
+Evaluation Results:
+Average Reward: 2404.4
+Success Rate: 0.0%
+
+400k:
+Evaluation Results:
+Average Reward: 2649.8
+Success Rate: 0.0%
+
+500k:
+Evaluation Results:
+Average Reward: 3073.2
+Success Rate: 0.0%
+
+600k:
+Evaluation Results:
+Average Reward: 3309.8
+Success Rate: 0.0%
+
+700k:
+Evaluation Results:
+Average Reward: 3490.4
+Success Rate: 0.0%
+
+800k:
+Evaluation Results:
+Average Reward: 3257.6
+Success Rate: 0.0%
+
+900k:
+Evaluation Results:
+Average Reward: 3168.6
+Success Rate: 0.0%
+
+1M:
+Evaluation Results:
+Average Reward: 3068.0
+Success Rate: 0.0%
